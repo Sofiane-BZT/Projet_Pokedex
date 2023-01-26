@@ -14,34 +14,18 @@ const fire = document.querySelector("#fire");
 const water = document.querySelector("#water");
 const ground = document.querySelector("#ground");
 const rock = document.querySelector("#rock");
-const pokemon = "venusaur";
+const typeListe = document.querySelector(".type-list");
+const listeFaiblesse = document.querySelector("#liste_faiblesse");
+// const TypePokemon = [];
+const pokemon = "charizard";
 
 // ------------------------------------FONCTIONS---------------------------------------
-
-// const specificationsWeight = document.querySelector("#specifications-weight");
-
-// window.onload = function () {
-//   fetchName();
 
 const poundsWeight = parseInt(specificationsWeight.textContent);
 console.log({ poundsWeight });
 const kgWeight = Math.round(poundsToKg(poundsWeight) * 100) / 100;
 console.log({ kgWeight });
 specificationsWeight.textContent = `${kgWeight}kg`;
-// };
-
-// async function fetchName() {
-//   // const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`);
-//   const response = await fetch("https://pokeapi.co/api/v2/pokemon/" + pokemon);
-//   const data = await response.json();
-//   const h1 = document.querySelector("h1");
-//   h1.textContent = data.name;
-//   const span = document.createElement("span");
-//   // span.textContent = `#${data.game_indices[0].game_index}`;
-//   span.textContent = "#" + data.game_indices[0].game_index;
-//   h1.appendChild(span);
-//   // h1.innerHTML = `${data.name} <span>#${data.game_indices[0].game_index}</span>`;
-// }
 
 // ------------------------------------GET NOM DU POKEMON--------------------------------------
 
@@ -69,7 +53,7 @@ async function getNumeroDePokemon() {
     const data = await response.json();
     console.log(data, "objets javascipt");
 
-    numeroDePokemon.textContent = "#" + data.game_indices[0].game_index;
+    numeroDePokemon.textContent = "#" + data.id;
     nomPokemon.appendChild(numeroDePokemon);
   } catch (error) {
     console.log(error, "erreur");
@@ -137,12 +121,12 @@ async function getCategorie() {
     const response = await fetch(
       // "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
       //   pokemon
-      "https://pokeapi.co/api/v2/pokemon/" + pokemon
+      "https://pokeapi.co/api/v2/pokemon-species/" + pokemon
     );
 
     const data = await response.json();
     console.log(data, "objets javascipt");
-    cathegorieDuPok.textContent = data.genera[3].genus;
+    cathegorieDuPok.textContent = data.genera[7].genus;
   } catch (error) {
     console.log(error, "erreur");
   }
@@ -182,24 +166,6 @@ async function getPoid() {
   }
 }
 
-// ----------------------------------GET LANGUE--------------------------------------------
-
-// Voir avec Sylvain à quelle élement je ratache texteContent ???????
-
-// async function getLangue() {
-//   try {
-//     const response = await fetch(
-//       "https://pokeapi.co/api/v2/pokemon-species/" + pokemon
-//     );
-
-//     const data = await response.json();
-//     console.log(data, "objets javascipt");
-//     textContent = data.genera[3].genus;
-//   } catch (error) {
-//     console.log(error, "erreur");
-//   }
-// }
-
 // ----------------------------------GET GENDER--------------------------------------------
 
 async function getGender() {
@@ -215,15 +181,87 @@ async function getGender() {
 
     gender = data.gender_rate;
 
-    if (gender == 1) {
-      genderFemale.style.display = "none";
-    } else {
-      genderMale.style.display = "none";
+    switch (gender) {
+      case -1:
+        genderFemale.style.display = "none";
+        genderMale.style.display = "none";
+        break;
+      case 0:
+        genderFemale.style.display = "none";
+        break;
+      case 8:
+        genderMale.style.display = "none";
+        break;
+
+      default:
+        genderFemale.style.display = "inline";
+        genderMale.style.display = "inline";
+        break;
     }
   } catch (error) {
     console.log(error, "erreur");
   }
 }
+
+// ----------------------------------------TYPE------------------------------------------
+
+async function getType() {
+  try {
+    const response = await fetch(
+      "https://pokeapi.co/api/v2/pokemon/" + pokemon
+    );
+
+    const data = await response.json();
+    console.log(data, "objets javascipt");
+
+    for (const dataDuType of data.types) {
+      const li = document.createElement("li");
+      typeListe.appendChild(li);
+
+      const button = document.createElement("button");
+      li.appendChild(button);
+
+      button.classList.add(dataDuType.type.name);
+      button.textContent = dataDuType.type.name;
+
+      getFaiblesse(dataDuType.type.name);
+
+      console.log(dataDuType);
+    }
+  } catch (error) {
+    console.log(error, "erreur");
+  }
+}
+
+// -------------------------------------GET FAIBLESSE----------------------------------------
+
+async function getFaiblesse(TypePokemon) {
+  try {
+    const response = await fetch(
+      "https://pokeapi.co/api/v2/type/" + TypePokemon
+    );
+
+    console.log(TypePokemon);
+    const data = await response.json();
+    console.log(data, "objets javascipt");
+
+    for (const dataFaiblesse of data.damage_relations.double_damage_from) {
+      const li = document.createElement("li");
+      listeFaiblesse.appendChild(li);
+
+      const button = document.createElement("button");
+      li.appendChild(button);
+
+      button.classList.add(dataFaiblesse.name);
+      button.textContent = dataFaiblesse.name;
+
+      console.log(dataFaiblesse);
+    }
+  } catch (error) {
+    console.log(error, "erreur");
+  }
+}
+
 // ----------------------------------AU CHARGEMENT--------------------------------------------
 https: window.onload = function () {
   getName();
@@ -235,5 +273,6 @@ https: window.onload = function () {
   getPoid();
   getCapacite();
   getGender();
-  // getLangue();
+  getType();
+  getFaiblesse();
 };
