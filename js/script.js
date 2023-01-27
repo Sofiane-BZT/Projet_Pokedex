@@ -16,15 +16,14 @@ const ground = document.querySelector("#ground");
 const rock = document.querySelector("#rock");
 const typeListe = document.querySelector(".type-list");
 const listeFaiblesse = document.querySelector("#liste_faiblesse");
-// const TypePokemon = [];
-const pokemon = "charizard";
+const pokemon = "venusaur";
 
 // ------------------------------------FONCTIONS---------------------------------------
 
 const poundsWeight = parseInt(specificationsWeight.textContent);
-console.log({ poundsWeight });
+// console.log({ poundsWeight });
 const kgWeight = Math.round(poundsToKg(poundsWeight) * 100) / 100;
-console.log({ kgWeight });
+// console.log({ kgWeight });
 specificationsWeight.textContent = `${kgWeight}kg`;
 
 // ------------------------------------GET NOM DU POKEMON--------------------------------------
@@ -37,7 +36,7 @@ async function getName() {
 
     const data = await response.json();
     nomPokemon.textContent = data.name;
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
   } catch (error) {
     console.log(error, "erreur");
   }
@@ -51,7 +50,7 @@ async function getNumeroDePokemon() {
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
 
     numeroDePokemon.textContent = "#" + data.id;
     nomPokemon.appendChild(numeroDePokemon);
@@ -68,7 +67,7 @@ async function getDescription() {
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
 
     phraseDescriptive.textContent = data.flavor_text_entries[0].flavor_text;
   } catch (error) {
@@ -81,13 +80,11 @@ async function getDescription() {
 async function getImage() {
   try {
     const response = await fetch(
-      // "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
-      //   pokemon
       "https://pokeapi.co/api/v2/pokemon/" + pokemon
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
 
     imgDuPokemon.src = data.sprites.other["official-artwork"].front_default;
   } catch (error) {
@@ -100,8 +97,6 @@ async function getImage() {
 async function getHeight() {
   try {
     const response = await fetch(
-      // "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
-      //   pokemon
       "https://pokeapi.co/api/v2/pokemon/" + pokemon
     );
 
@@ -119,13 +114,11 @@ async function getHeight() {
 async function getCategorie() {
   try {
     const response = await fetch(
-      // "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
-      //   pokemon
       "https://pokeapi.co/api/v2/pokemon-species/" + pokemon
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
     cathegorieDuPok.textContent = data.genera[7].genus;
   } catch (error) {
     console.log(error, "erreur");
@@ -139,7 +132,7 @@ async function getCapacite() {
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
     capaciteDuPok.textContent = data.abilities[0].ability.name;
   } catch (error) {
     console.log(error, "erreur");
@@ -158,7 +151,7 @@ async function getPoid() {
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
     specificationsWeight.textContent =
       Math.round(poundsToKg(data.weight)) + " " + "Kg";
   } catch (error) {
@@ -171,13 +164,11 @@ async function getPoid() {
 async function getGender() {
   try {
     const response = await fetch(
-      // "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/" +
-      //   pokemon
       "https://pokeapi.co/api/v2/pokemon-species/" + pokemon
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
 
     gender = data.gender_rate;
 
@@ -212,7 +203,7 @@ async function getType() {
     );
 
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
 
     for (const dataDuType of data.types) {
       const li = document.createElement("li");
@@ -226,7 +217,7 @@ async function getType() {
 
       getFaiblesse(dataDuType.type.name);
 
-      console.log(dataDuType);
+      // console.log(dataDuType);
     }
   } catch (error) {
     console.log(error, "erreur");
@@ -243,7 +234,7 @@ async function getFaiblesse(TypePokemon) {
 
     console.log(TypePokemon);
     const data = await response.json();
-    console.log(data, "objets javascipt");
+    // console.log(data, "objets javascipt");
 
     for (const dataFaiblesse of data.damage_relations.double_damage_from) {
       const li = document.createElement("li");
@@ -255,7 +246,55 @@ async function getFaiblesse(TypePokemon) {
       button.classList.add(dataFaiblesse.name);
       button.textContent = dataFaiblesse.name;
 
-      console.log(dataFaiblesse);
+      // console.log(dataFaiblesse);
+    }
+  } catch (error) {
+    console.log(error, "erreur");
+  }
+}
+// ------------------------------------GET STATS-----------------------------------------
+
+async function getStats() {
+  const stats = document.querySelector(".stats");
+  try {
+    const response = await fetch(
+      "https://pokeapi.co/api/v2/pokemon/" + pokemon
+    );
+
+    const data = await response.json();
+    console.log(data, "objets javascipt");
+
+    for (const dataStats of data.stats) {
+      stats.classList.add(
+        dataStats.stat.name +
+          "-" +
+          Math.min(15, Math.round((dataStats.base_stat * 15) / 100))
+      );
+    }
+  } catch (error) {
+    console.log(error, "erreur");
+  }
+}
+
+// ----------------------------------LISTE DES POKEMONS--------------------------------------------
+async function getListePokemon() {
+  const pokemonDataList = document.querySelector("#pokemon-list");
+  console.log(pokemonDataList);
+  try {
+    const response = await fetch(
+      "https://pokeapi.co/api/v2/pokemon?limit=100000&offset=0"
+    );
+
+    const data = await response.json();
+    console.log(data);
+
+    for (const iterator of data.results) {
+      const listeName = iterator.name;
+      console.log(listeName);
+
+      let PokemonListOption = document.createElement("option");
+      PokemonListOption.textContent = listeName;
+      pokemonDataList.appendChild(PokemonListOption);
     }
   } catch (error) {
     console.log(error, "erreur");
@@ -263,6 +302,7 @@ async function getFaiblesse(TypePokemon) {
 }
 
 // ----------------------------------AU CHARGEMENT--------------------------------------------
+
 https: window.onload = function () {
   getName();
   getNumeroDePokemon();
@@ -275,4 +315,6 @@ https: window.onload = function () {
   getGender();
   getType();
   getFaiblesse();
+  getStats();
+  getListePokemon();
 };
